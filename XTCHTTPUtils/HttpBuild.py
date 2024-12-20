@@ -39,12 +39,12 @@ class Http_Build:
             self.logger.error('构建请求时发生错误！请检查参数是否正确！错误见下：' + str(e))
             return None
 
-    def send(self, request: requests.Request, key: str) -> Optional[str]:
+    def send(self, request: requests.Request, key: str) -> Optional[dict]:
         try:
             session = requests.Session()
             response = session.send(request.prepare(), proxies={})
-            decrypted_data = Eebbk.eebbkDecrypt(response, key)
-            return decrypted_data
+            decrypted_data_dict = Eebbk.eebbkDecrypt(response, key)
+            return decrypted_data_dict
         except Exception as e:
             self.logger.error('请求时发生了一个错误，错误见下：' + str(e))
             return None

@@ -10,7 +10,7 @@
 ### 方法一：下载可执行文件
 1. 下载 `Releases` 中与你系统匹配的可执行二进制文件。
 
-### 方法二：从源码运行
+### 方法二：从源码运行(建议使用，可以安装最新版本)
 1. 克隆仓库：
    ```bash
    git clone https://github.com/Are-16/XTC-Request-encrypt.git

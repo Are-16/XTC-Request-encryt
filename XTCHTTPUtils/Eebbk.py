@@ -1,5 +1,4 @@
 import requests
-
 from XTCHTTPUtils.encode.AESkey import AESencode
 from XTCHTTPUtils.encode.MD5 import MD5Util
 from XTCHTTPUtils.encode.RSAutil import RSAUtil
@@ -7,7 +6,7 @@ import io
 import gzip
 from typing import Optional
 from XTCHTTPUtils.log import Logger
-
+import json
 
 # 日志配置
 
@@ -66,12 +65,20 @@ class Eebbk:
         # 加密和设置 Base-Request-Param 参数
         if origparam:
             encryptedParam = AESencode.encode(origparam, key)
-            request.headers['Base-Request-Param'] = encryptedParam
-
+            if encryptedParam:
+                request.headers['Base-Request-Param'] = encryptedParam
+            else:
+                logger.error('加密Base-Request-Param失败！')
         # 设置签名和其他header
-        request.headers['Eebbk-Sign'] = sign
+        if sign:
+            request.headers['Eebbk-Sign'] = sign
+        
         request.headers['Eebbk-Key-Id'] = keyId
-        request.headers['Eebbk-Key'] = RSAUtil.encrypt(key, publickey)
+        eERsa_Key = RSAUtil.encrypt(key, publickey)
+        if eERsa_Key:
+            request.headers['Eebbk-Key'] = eERsa_Key
+        else:
+            return None
         request.headers['Content-Encoding'] = 'gzip'
         request.headers['encrypted'] = 'encrypted'
 
@@ -80,9 +87,11 @@ class Eebbk:
             if origbody:
                 compressed_body = gzip.compress(origbody.encode('utf-8'))
                 encrypted_body = AESencode.encode_bytes(compressed_body, key)
-                request.data = encrypted_body
-            else:
-                request.data = None
+                if encrypted_body:
+                    request.data = encrypted_body
+                else:
+                    logger.error('加密body失败！')
+                    return None
         except Exception as e:
             logger.error(f"处理body时发生错误！报错信息：{e}")
             return None
@@ -90,13 +99,15 @@ class Eebbk:
         return request
 
     @staticmethod
-    def eebbkDecrypt(response: requests.Response, key: str) -> str:
+    def eebbkDecrypt(response: requests.Response, key: str) -> dict:
         """解密小天才返回的响应
         输入：response (requests.Response)
             AESkey (str)
-        返回：解密后的body (str)
+        返回：解密后的状态码和具体body，dict格式。两个字段：code,body
         """
         decrypted_body = response.text[1:-1]
         if decrypted_body:
             decrypted_body = AESencode.decrypt_response(decrypted_body, key)
-        return decrypted_body
+        xtc_response_dict = {'code': json.loads(decrypted_body).get('code'),
+                    'body':decrypted_body}
+        return xtc_response_dict
