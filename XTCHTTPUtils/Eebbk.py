@@ -109,5 +109,5 @@ class Eebbk:
         if decrypted_body:
             decrypted_body = AESencode.decrypt_response(decrypted_body, key)
         xtc_response_dict = {'code': json.loads(decrypted_body).get('code'),
-                    'body':decrypted_body}
+                    'body':json.loads(decrypted_body)}
         return xtc_response_dict
