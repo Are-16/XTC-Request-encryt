@@ -1,4 +1,4 @@
-# XTC-Request-encrypt
+# XTC-Request-encrypt[![Build and Release](https://github.com/Are-16/XTC-Request-encryt/actions/workflows/pack.yaml/badge.svg)](https://github.com/Are-16/XTC-Request-encryt/actions/workflows/pack.yaml)
 
 ## 适用于小天才请求加密的仓库
 
