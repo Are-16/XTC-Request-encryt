@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'  # 在任何标签推送时触发
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -12,10 +13,10 @@ jobs:
         architecture: [amd64, arm64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -29,7 +30,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(git describe --tags --always)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV  # 将版本号写入 GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Build Linux executable
         run: |
@@ -38,7 +39,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
       - name: Upload Linux build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.architecture }}
           path: dist/
@@ -50,10 +51,10 @@ jobs:
         architecture: [amd64, arm64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -69,7 +70,7 @@ jobs:
           $VERSION = git describe --tags --always
           Write-Host "VERSION=$VERSION"
           $env:VERSION=$VERSION
-          echo "VERSION=$env:VERSION" >> $GITHUB_ENV  # 将版本号写入 GITHUB_ENV
+          echo "VERSION=$env:VERSION" >> $env:GITHUB_ENV
 
       - name: Build Windows executable
         run: |
@@ -78,7 +79,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
       - name: Upload Windows build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.architecture }}
           path: dist/
@@ -90,10 +91,10 @@ jobs:
         architecture: [amd64, arm64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -107,7 +108,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(git describe --tags --always)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV  # 将版本号写入 GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Build macOS executable
         run: |
@@ -116,7 +117,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
       - name: Upload macOS build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.architecture }}
           path: dist/
@@ -126,54 +127,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Read Release Notes
         id: read_release_notes
         run: |
-          # 读取 RELEASESBODY.md 文件的内容，替换换行符为空格，并转义特殊字符
           RELEASE_NOTES=$(cat RELEASESBODY.md | tr '\n' ' ' | sed 's/"/\\"/g' | sed 's/\//\\\//g' | sed 's/-/\\-/g')
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
-          
-      
+
       - name: Get version from Git
         id: get_version
         run: |
           VERSION=$(git describe --tags --always)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV  # 将版本号写入 GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Download Linux amd64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-amd64
           path: ./artifacts/linux-amd64/
 
       - name: Download Linux arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-arm64
           path: ./artifacts/linux-arm64/
 
       - name: Download Windows amd64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-amd64
           path: ./artifacts/windows-amd64/
 
       - name: Download Windows arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-arm64
           path: ./artifacts/windows-arm64/
 
       - name: Download macOS amd64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-amd64
           path: ./artifacts/macos-amd64/
 
       - name: Download macOS arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-arm64
           path: ./artifacts/macos-arm64/
