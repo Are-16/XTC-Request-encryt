@@ -19,7 +19,7 @@ def run_cli():
     # 获取当前进程的父进程信息
     parent_process = psutil.Process(os.getppid())
     parent_name = parent_process.name().lower()
-
+    
     if platform.system() == "Windows":
         if not os.getenv("RUN_FROM_BATCH") and parent_name not in ["cmd.exe", "powershell.exe"]:
             generate_start_file(parent_name)
